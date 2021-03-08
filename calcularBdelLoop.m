@@ -4,52 +4,69 @@ function [B] = calcularBdelLoop(a,b,x,y,z,I,n)
 %--------------------------------------------------------------------------
 %---Parameters settings---
 id_cable = 1;
-mu_0 = 4*pi*1e-7;
-B_aux = zeros(1,4);
+mu_0 = 4*pi*1e-7;  % Permeabilidad magnética del aire.
+B = zeros(1,3);
+B_aux = 0;
 %--------------------------------------------------------------------------
-if z==0
-    if x<=a && y<=b
-        for i = 1:1:4                
-            if id_cable==1 %Case for first wire
-                d = a+x;
-                y1 = b-y;
-                y2 = b+y;
-                theta_1 = atan(y1/d);
-                theta_2 = atan(y2/d);
-                B_aux(1) = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d);
-                id_cable = 2;
-            elseif id_cable==2 %Case for second wire
-                d = b-y;
-                y1 = a-x;
-                y2 = a+x;
-                theta_1 = atan(y1/d);
-                theta_2 = atan(y2/d);
-                B_aux(2) = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d);
-                id_cable = 3;
-            elseif id_cable==3 %Case for third wire
-                d = a-x;
-                y1 = b+y;
-                y2 = b-y;
-                theta_1 = atan(y1/d);
-                theta_2 = atan(y2/d);
-                B_aux(3) = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d);
-                id_cable = 4;
-            elseif id_cable==4 %Case for fourth wire
-                d = b+y;
-                y1 = a+x;
-                y2 = a-x;
-                theta_1 = atan(y1/d);
-                theta_2 = atan(y2/d);
-                B_aux(4) = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d);
-            end
+if x<=a && y<=b && z<=a
+    for i = 1:1:4
+        if id_cable==1 %Case for first wire
+            d = a+x;
+            d2 = sqrt(d^2+z^2);
+            beta = atan(z/d);
+            y1 = b-y;
+            y2 = b+y;
+            theta_1 = atan(y1/d2);
+            theta_2 = atan(y2/d2);
+            B_aux = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d2);
+            B(1) = B_aux*sin(beta);
+            B(3) = -B_aux*cos(beta);
+            id_cable = 2;
+            B_aux = 0;
+        elseif id_cable==2 %Case for second wire
+            d = b-y;
+            d2 = sqrt(d^2+z^2);
+            beta = atan(z/d);
+            y1 = a-x;
+            y2 = a+x;
+            theta_1 = atan(y1/d2);
+            theta_2 = atan(y2/d2);
+            B_aux = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d2);
+            B(2) = B(2) + (-B_aux*sin(beta));
+            B(3) = B(3) + (-B_aux*cos(beta));
+            B_aux = 0;
+            id_cable = 3;
+        elseif id_cable==3 %Case for third wire
+            d = a-x;
+            d2 = sqrt(d^2+z^2);
+            beta = atan(z/d);
+            y1 = b+y;
+            y2 = b-y;
+            theta_1 = atan(y1/d2);
+            theta_2 = atan(y2/d2);
+            B_aux = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d2);
+            B(1) = B(1) + (-B_aux*sin(beta));
+            B(3) = B(3) + (-B_aux*cos(beta));            
+            B_aux = 0;
+            id_cable = 4;
+        elseif id_cable==4 %Case for fourth wire
+            d = b+y;
+            d2 = sqrt(d^2+z^2);
+            beta = atan(z/d);
+            y1 = a+x;
+            y2 = a-x;
+            theta_1 = atan(y1/d2);
+            theta_2 = atan(y2/d2);
+            B_aux = (mu_0*I*(sin(theta_1)+sin(theta_2)))/(4*pi*d2);
+            B(2) = B(2) + (B_aux*sin(beta));
+            B(3) = B(3) + (-B_aux*cos(beta));
+            B_aux = 0;
         end
-    else
-        msgbox("El punto a calcular supera los límites.",'Error','error');
     end
-    B = [0,0,-1*n*sum(B_aux)];
+    B = B*n*1e6; %Retorna el valor de campo hallado en µT
 else
-    disp("no entramos");
+    msgbox("El punto a calcular supera los límites.",'Error','error');
 end
-
+    
 end
 
