@@ -7,7 +7,7 @@ id_cable = 1;
 mu_0 = 4*pi*1e-7;  % Permeabilidad magnética del aire.
 B = zeros(1,3);
 %--------------------------------------------------------------------------
-if x<=a && y<=b && z<=a
+if x<=a && y<=b 
     for i = 1:1:4
         if id_cable==1 %Case for first wire
             d = a+x;

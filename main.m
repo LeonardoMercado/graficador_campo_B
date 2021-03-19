@@ -11,7 +11,7 @@ close all;
 % Parameters definition:
 datos_solicitados = {'a','b','n','límites a analizar[±]','Δ del análisis','Corriente','x:','y:','z:'};
 dimensiones = [1 50];
-por_defecto = {'0.5','0.5','43','0.03','0.01','10','0','0','0'};
+por_defecto = {'0.5','0.5','43','0.03','0.01','5','0','0','0'};
 input = inputdlg(datos_solicitados,'Ingrese los datos:',dimensiones,por_defecto);
 %--------------------------------------------------------------------------
 
